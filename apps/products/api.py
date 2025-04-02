@@ -74,16 +74,41 @@ class ProductListViewAPI(generics.ListAPIView):
     
     def list(self, request, *args, **kwargs):
         search=request.GET.get('search',None)
+        category=request.GET.get('category',None)
 
         queryset = product_models.Product.objects.all().order_by('-pk')
             
         if search :
             queryset = queryset.filter(Q(title__icontains=search) | Q (description__icontains=search))
+        if category :
+            queryset = queryset.filter(Q(category__name__icontains=search))
             
         serializer = self.get_serializer(queryset, many=True)
         # page, page_info = self.paginate_queryset(queryset)
         # if page is not None:
         #     serializer = self.get_serializer(page, many=True)
+        
+        data = serializer.data
+
+        if not queryset:
+            return Response(functions.ResponseHandling.failure_response_message(messages.DATA_NOT_FOUND,[] ), status=status_code.status200)
+        return Response (functions.ResponseHandling.success_response_message(messages.LIST_SENT, data), status=status_code.status200)
+    
+    
+    
+
+class ProductViewAPI(generics.RetrieveAPIView):
+
+    serializer_class=product_serializers.ProductSerializer
+    pagination_class=ProductPagination
+    
+    def get(self, request, *args, **kwargs):
+        id=request.GET.get('id',None)
+   
+        queryset = product_models.Product.objects.get(pk=id)
+            
+            
+        serializer = self.get_serializer(queryset)
         
         data = serializer.data
 
