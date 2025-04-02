@@ -82,7 +82,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
-    "https://ecomm-5bct.onrender.com/",
+    "https://ecomm-5bct.onrender.com",
 ]
 
 
